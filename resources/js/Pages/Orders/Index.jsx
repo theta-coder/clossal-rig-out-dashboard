@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, router } from '@inertiajs/react';
+import Swal from 'sweetalert2';
 import DashboardLayout from '../../Components/DashboardLayout';
 import DataTable from '../../Components/DataTable';
 import { HiOutlineEye, HiOutlineTrash } from 'react-icons/hi';
@@ -33,7 +34,21 @@ export default function OrdersIndex() {
                         <Link href={`/orders/${row.id}`} className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors">
                             <HiOutlineEye className="w-4 h-4" />
                         </Link>
-                        <button onClick={() => { if (confirm('Delete this order?')) router.delete(`/orders/${row.id}`); }} className="p-2 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400 transition-colors">
+                        <button onClick={() => {
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#d33',
+                                cancelButtonColor: '#3085d6',
+                                confirmButtonText: 'Yes, delete it!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    router.delete(`/orders/${row.id}`);
+                                }
+                            });
+                        }} className="p-2 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400 transition-colors">
                             <HiOutlineTrash className="w-4 h-4" />
                         </button>
                     </>

@@ -1,11 +1,53 @@
-import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { Head, usePage } from '@inertiajs/react';
 import Sidebar from './Sidebar';
 import ThemeToggle from './ThemeToggle';
 import { HiOutlineBell, HiOutlineSearch } from 'react-icons/hi';
+import Swal from 'sweetalert2';
 
 export default function DashboardLayout({ children, title }) {
     const [collapsed, setCollapsed] = useState(false);
+    const { flash, errors } = usePage().props;
+
+    useEffect(() => {
+        if (flash?.success) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: flash.success,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+        }
+        if (flash?.error) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: flash.error,
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+            });
+        }
+
+        // Check for validation errors and show a generic error toast if they exist
+        if (errors && Object.keys(errors).length > 0) {
+            const errorMessages = Object.values(errors).join('<br>');
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Validation Error',
+                html: errorMessages,
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true,
+            });
+        }
+    }, [flash, errors]);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">

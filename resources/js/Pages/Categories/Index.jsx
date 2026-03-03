@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, router } from '@inertiajs/react';
+import Swal from 'sweetalert2';
 import DashboardLayout from '../../Components/DashboardLayout';
 import DataTable from '../../Components/DataTable';
 import { HiOutlinePencil, HiOutlineTrash, HiOutlinePlus, HiOutlineCheck } from 'react-icons/hi';
@@ -27,9 +28,19 @@ export default function CategoriesIndex() {
     ];
 
     const handleDelete = (id) => {
-        if (confirm('Are you sure you want to delete this category?')) {
-            router.delete(`/categories/${id}`);
-        }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.delete(`/categories/${id}`);
+            }
+        });
     };
 
     const handleActivate = (id) => {
