@@ -19,19 +19,19 @@ import {
 } from 'react-icons/hi';
 
 const navItems = [
-    { name: 'Dashboard',   href: '/dashboard',  icon: HiOutlineHome },
-    { name: 'Categories',  href: '/categories', icon: HiOutlineTag },
-    { name: 'Products',    href: '/products',   icon: HiOutlineShoppingBag },
-    { name: 'Sizes',       href: '/sizes',      icon: HiOutlineArrowsExpand },
-    { name: 'Colors',      href: '/colors',     icon: HiOutlineColorSwatch },
-    { name: 'Orders',      href: '/orders',     icon: HiOutlineClipboardList },
-    { name: 'Users',       href: '/users',      icon: HiOutlineUsers },
-    { name: 'Roles',       href: '/roles',      icon: HiOutlineShieldCheck },
-    { name: 'Reviews',     href: '/reviews',    icon: HiOutlineStar },
-    { name: 'Coupons',     href: '/coupons',    icon: HiOutlineGift },
-    { name: 'Subscribers', href: '/subscribers',icon: HiOutlineMail },
-    { name: 'Messages',    href: '/messages',   icon: HiOutlineChatAlt2 },
-    { name: 'Settings',    href: '/settings',   icon: HiOutlineCog },
+    { name: 'Dashboard', href: '/dashboard', icon: HiOutlineHome, permission: 'dashboard_access' },
+    { name: 'Categories', href: '/categories', icon: HiOutlineTag, permission: 'show_categories' },
+    { name: 'Products', href: '/products', icon: HiOutlineShoppingBag, permission: 'show_products' },
+    { name: 'Sizes', href: '/sizes', icon: HiOutlineArrowsExpand, permission: 'show_sizes' },
+    { name: 'Colors', href: '/colors', icon: HiOutlineColorSwatch, permission: 'show_colors' },
+    { name: 'Orders', href: '/orders', icon: HiOutlineClipboardList, permission: 'show_orders' },
+    { name: 'Users', href: '/users', icon: HiOutlineUsers, permission: 'show_users' },
+    { name: 'Roles', href: '/roles', icon: HiOutlineShieldCheck, permission: 'show_roles' },
+    { name: 'Reviews', href: '/reviews', icon: HiOutlineStar, permission: 'show_reviews' },
+    { name: 'Coupons', href: '/coupons', icon: HiOutlineGift, permission: 'show_coupons' },
+    { name: 'Subscribers', href: '/subscribers', icon: HiOutlineMail, permission: 'show_subscribers' },
+    { name: 'Messages', href: '/messages', icon: HiOutlineChatAlt2, permission: 'show_messages' },
+    { name: 'Settings', href: '/settings', icon: HiOutlineCog, permission: 'show_settings' },
 ];
 
 export default function Sidebar({ collapsed, setCollapsed }) {
@@ -66,6 +66,11 @@ export default function Sidebar({ collapsed, setCollapsed }) {
             <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
                 {navItems.map((item) => {
                     const active = isActive(item.href);
+                    // Check permissions
+                    const hasPermission = auth.roles?.includes('admin') || auth.permissions?.includes(item.permission);
+
+                    if (!hasPermission) return null;
+
                     return (
                         <Link
                             key={item.name}
@@ -98,7 +103,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                         <div className="min-w-0">
                             <p className="text-xs font-semibold text-gray-900 dark:text-white truncate">{auth?.user?.name || 'Admin'}</p>
                             <span className="text-[9px] font-black uppercase tracking-widest bg-primary-500 text-white px-1.5 py-0.5 rounded-full">
-                                {auth?.user?.role || 'admin'}
+                                {auth?.roles?.[0] || 'admin'}
                             </span>
                         </div>
                     )}

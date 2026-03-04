@@ -88,7 +88,7 @@ class UserController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'role' => $user->role,
+            'role' => $user->getRoleNames()->first(),
             'orders_count' => $user->orders_count,
             'favorites_count' => $user->favorites_count,
             'created_at' => $user->created_at->format('M d, Y'),
@@ -106,7 +106,9 @@ class UserController extends Controller
 
     public function create()
     {
-        return Inertia::render('Users/Create');
+        return Inertia::render('Users/Create', [
+            'roles' => \Spatie\Permission\Models\Role::all(),
+        ]);
     }
 
     public function store(Request $request)
@@ -116,12 +118,15 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
-            'role' => 'required|in:admin,customer',
+            'role' => 'required|string|exists:roles,name',
         ]);
 
+        $roleName = $validated['role'];
+        unset($validated['role']);
         $validated['password'] = Hash::make($validated['password']);
 
-        User::create($validated);
+        $user = User::create($validated);
+        $user->assignRole($roleName);
 
         return back()->with('success', 'User created successfully.');
     }
@@ -130,6 +135,7 @@ class UserController extends Controller
     {
         return Inertia::render('Users/Show', [
             'user' => $user->load(['orders.items', 'addresses', 'favorites.product', 'reviews']),
+            'roles' => $user->getRoleNames(),
         ]);
     }
 
@@ -137,6 +143,8 @@ class UserController extends Controller
     {
         return Inertia::render('Users/Edit', [
             'user' => $user,
+            'userRole' => $user->getRoleNames()->first(),
+            'roles' => \Spatie\Permission\Models\Role::all(),
         ]);
     }
 
@@ -147,8 +155,11 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
-            'role' => 'required|in:admin,customer',
+            'role' => 'required|string|exists:roles,name',
         ]);
+
+        $roleName = $validated['role'];
+        unset($validated['role']);
 
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
@@ -158,14 +169,17 @@ class UserController extends Controller
         }
 
         $user->update($validated);
+        $user->syncRoles($roleName);
 
         return back()->with('success', 'User updated successfully.');
     }
 
     public function destroy(User $user)
     {
+        if ($user->hasRole('admin') && User::role('admin')->count() <= 1) {
+            return back()->with('error', 'Cannot delete the last admin user.');
+        }
         $user->delete();
-
         return back()->with('success', 'User deleted successfully.');
     }
 }

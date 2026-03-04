@@ -31,7 +31,7 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            if (!Auth::user()->isAdmin()) {
+            if (!Auth::user()->hasDashboardAccess()) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();

@@ -57,8 +57,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('messages/{message}', [ContactMessageController::class , 'destroy'])->name('messages.destroy');
 
     // Roles & Permissions
-    Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
-    Route::patch('roles/{user}', [RoleController::class, 'update'])->name('roles.update');
+    Route::resource('roles', RoleController::class)->except(['show', 'create', 'edit']);
 
     // Settings
     Route::get('settings', [SettingController::class , 'index'])->name('settings.index');

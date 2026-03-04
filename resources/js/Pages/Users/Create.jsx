@@ -2,8 +2,15 @@ import React from 'react';
 import { useForm, Link } from '@inertiajs/react';
 import DashboardLayout from '../../Components/DashboardLayout';
 
-export default function UsersCreate() {
-    const { data, setData, post, processing, errors } = useForm({ name: '', email: '', password: '', password_confirmation: '', phone: '', role: 'customer' });
+export default function UsersCreate({ roles }) {
+    const { data, setData, post, processing, errors } = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        phone: '',
+        role: roles?.[0]?.name || 'customer'
+    });
     const handleSubmit = (e) => { e.preventDefault(); post('/users'); };
     const inputClass = "w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all";
 
@@ -18,8 +25,9 @@ export default function UsersCreate() {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Role</label>
                         <select value={data.role} onChange={e => setData('role', e.target.value)} className={inputClass}>
-                            <option value="customer">Customer</option>
-                            <option value="admin">Admin</option>
+                            {roles.map(role => (
+                                <option key={role.id} value={role.name}>{role.name.charAt(0).toUpperCase() + role.name.slice(1)}</option>
+                            ))}
                         </select>
                         {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
                     </div>

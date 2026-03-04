@@ -11,7 +11,7 @@ class EnsureIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
+        if (!Auth::check() || !Auth::user()->hasDashboardAccess()) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();

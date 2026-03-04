@@ -10,10 +10,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -53,7 +55,30 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->hasRole('admin') || $this->role === 'admin';
+    }
+
+    public function hasDashboardAccess(): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        try {
+            if ($this->hasPermissionTo('dashboard_access')) {
+                return true;
+            }
+        }
+        catch (\Exception $e) {
+        }
+
+        // Allow if they have any Spatie role that isn't 'customer'
+        if ($this->roles()->where('name', '!=', 'customer')->exists()) {
+            return true;
+        }
+
+        // Allow if their legacy string role is something other than 'customer'
+        return $this->role !== 'customer' && $this->role !== null;
     }
 
     public function addresses(): HasMany
