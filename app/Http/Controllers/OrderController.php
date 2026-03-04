@@ -8,6 +8,13 @@ use Inertia\Inertia;
 
 class OrderController extends Controller
 {
+    protected $orderService;
+
+    public function __construct(\App\Services\OrderService $orderService)
+    {
+        $this->orderService = $orderService;
+    }
+
     /**
      * Display a listing of orders
      */
@@ -24,7 +31,9 @@ class OrderController extends Controller
         }
 
         // Initial Inertia page load (React)
-        return Inertia::render('Orders/Index');
+        return Inertia::render('Orders/Index', [
+            'statuses' => $this->orderService->getStatuses()
+        ]);
     }
 
     /**
@@ -72,7 +81,7 @@ class OrderController extends Controller
         // Sorting
         $orderColumn = $request->input('order.0.column', 5); // Default to created_at
         $orderDir = $request->input('order.0.dir', 'desc');
-        $columns = ['id', 'order_number', 'user_id', 'total_amount', 'status', 'created_at'];
+        $columns = ['id', 'order_number', 'user_id', 'total', 'status', 'created_at'];
 
         if (isset($columns[$orderColumn])) {
             $query->orderBy($columns[$orderColumn], $orderDir);
@@ -89,11 +98,11 @@ class OrderController extends Controller
             'DT_RowIndex' => $start + $index + 1,
             'id' => $order->id,
             'order_number' => $order->order_number,
-            'customer_name' => $order->user ? $order->user->name : 'Guest',
-            'customer_email' => $order->user ? $order->user->email : 'N/A',
+            'customer_name' => $order->user ? $order->user->name : ($order->address ? $order->address->name : 'Guest'),
+            'customer_email' => $order->user ? $order->user->email : ($order->address ? $order->address->email : 'N/A'),
             'items_count' => $order->items->count(),
-            'total_amount' => '$' . number_format($order->total_amount, 2),
-            'status' => ucfirst($order->status),
+            'total_amount' => '$' . number_format($order->total, 2),
+            'status' => ucfirst(str_replace('_', ' ', $order->status)),
             'created_at' => $order->created_at->format('M d, Y h:i A'),
             'action' => $order->id,
             ];
@@ -110,20 +119,21 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         return Inertia::render('Orders/Show', [
-            'order' => $order->load(['user', 'address', 'items.product']),
+            'order' => $order->load(['user', 'address', 'items.product', 'statusHistories']),
+            'statuses' => $this->orderService->getStatuses()
         ]);
     }
 
     public function update(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'status' => 'required|in:processing,shipped,delivered,cancelled',
+            'status' => 'required|in:pending,confirmed,ready_to_ship,shipped,delivered,cancelled',
             'notes' => 'nullable|string',
         ]);
 
-        $order->update($validated);
+        $this->orderService->updateStatus($order, $validated['status'], $validated['notes'] ?? null);
 
-        return back()->with('success', 'Order updated successfully.');
+        return back()->with('success', 'Order status updated to ' . $validated['status']);
     }
 
     public function destroy(Order $order)

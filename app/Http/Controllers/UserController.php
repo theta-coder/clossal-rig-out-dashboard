@@ -88,6 +88,7 @@ class UserController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
+            'role' => $user->role,
             'orders_count' => $user->orders_count,
             'favorites_count' => $user->favorites_count,
             'created_at' => $user->created_at->format('M d, Y'),
@@ -115,6 +116,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
+            'role' => 'required|in:admin,customer',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -145,6 +147,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
+            'role' => 'required|in:admin,customer',
         ]);
 
         if (!empty($validated['password'])) {

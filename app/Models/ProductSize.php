@@ -12,7 +12,7 @@ class ProductSize extends Model
 
     protected $fillable = [
         'product_id',
-        'size',
+        'size_id',
         'stock',
     ];
 
@@ -26,5 +26,10 @@ class ProductSize extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function size(): BelongsTo
+    {
+        return $this->belongsTo(Size::class);
     }
 }

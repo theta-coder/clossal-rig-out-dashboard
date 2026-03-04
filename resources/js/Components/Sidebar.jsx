@@ -13,23 +13,29 @@ import {
     HiOutlineCog,
     HiOutlineChevronLeft,
     HiOutlineMenu,
+    HiOutlineArrowsExpand,
+    HiOutlineColorSwatch,
+    HiOutlineShieldCheck,
 } from 'react-icons/hi';
 
 const navItems = [
-    { name: 'Dashboard', href: '/', icon: HiOutlineHome },
-    { name: 'Categories', href: '/categories', icon: HiOutlineTag },
-    { name: 'Products', href: '/products', icon: HiOutlineShoppingBag },
-    { name: 'Orders', href: '/orders', icon: HiOutlineClipboardList },
-    { name: 'Users', href: '/users', icon: HiOutlineUsers },
-    { name: 'Reviews', href: '/reviews', icon: HiOutlineStar },
-    { name: 'Coupons', href: '/coupons', icon: HiOutlineGift },
-    { name: 'Subscribers', href: '/subscribers', icon: HiOutlineMail },
-    { name: 'Messages', href: '/messages', icon: HiOutlineChatAlt2 },
-    { name: 'Settings', href: '/settings', icon: HiOutlineCog },
+    { name: 'Dashboard',   href: '/dashboard',  icon: HiOutlineHome },
+    { name: 'Categories',  href: '/categories', icon: HiOutlineTag },
+    { name: 'Products',    href: '/products',   icon: HiOutlineShoppingBag },
+    { name: 'Sizes',       href: '/sizes',      icon: HiOutlineArrowsExpand },
+    { name: 'Colors',      href: '/colors',     icon: HiOutlineColorSwatch },
+    { name: 'Orders',      href: '/orders',     icon: HiOutlineClipboardList },
+    { name: 'Users',       href: '/users',      icon: HiOutlineUsers },
+    { name: 'Roles',       href: '/roles',      icon: HiOutlineShieldCheck },
+    { name: 'Reviews',     href: '/reviews',    icon: HiOutlineStar },
+    { name: 'Coupons',     href: '/coupons',    icon: HiOutlineGift },
+    { name: 'Subscribers', href: '/subscribers',icon: HiOutlineMail },
+    { name: 'Messages',    href: '/messages',   icon: HiOutlineChatAlt2 },
+    { name: 'Settings',    href: '/settings',   icon: HiOutlineCog },
 ];
 
 export default function Sidebar({ collapsed, setCollapsed }) {
-    const { url } = usePage();
+    const { url, props: { auth } } = usePage();
     const [mobileOpen, setMobileOpen] = useState(false);
 
     const isActive = (href) => {
@@ -79,6 +85,25 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                     );
                 })}
             </nav>
+
+            {/* User info */}
+            <div className="p-3 border-t border-gray-200 dark:border-gray-800">
+                <div className={`flex items-center gap-3 px-2 py-2 rounded-xl bg-gray-50 dark:bg-gray-800/50 ${collapsed ? 'justify-center' : ''}`}>
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-xs font-bold uppercase">
+                            {auth?.user?.name ? auth.user.name.charAt(0) : 'A'}
+                        </span>
+                    </div>
+                    {!collapsed && (
+                        <div className="min-w-0">
+                            <p className="text-xs font-semibold text-gray-900 dark:text-white truncate">{auth?.user?.name || 'Admin'}</p>
+                            <span className="text-[9px] font-black uppercase tracking-widest bg-primary-500 text-white px-1.5 py-0.5 rounded-full">
+                                {auth?.user?.role || 'admin'}
+                            </span>
+                        </div>
+                    )}
+                </div>
+            </div>
 
             {/* Collapse button (desktop) */}
             <div className="hidden lg:block p-3 border-t border-gray-200 dark:border-gray-800">

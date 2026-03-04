@@ -43,12 +43,22 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
-    public function sizes(): HasMany
+    public function sizes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Size::class , 'product_sizes')->withPivot('stock');
+    }
+
+    public function colors(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Color::class , 'product_colors');
+    }
+
+    public function sizeAttributes(): HasMany
     {
         return $this->hasMany(ProductSize::class);
     }
 
-    public function colors(): HasMany
+    public function colorAttributes(): HasMany
     {
         return $this->hasMany(ProductColor::class);
     }

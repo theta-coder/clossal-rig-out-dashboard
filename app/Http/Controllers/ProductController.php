@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Size;
+use App\Models\Color;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -130,9 +132,10 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $categories = Category::where('is_active', true)->get(['id', 'name']);
         return Inertia::render('Products/Create', [
-            'categories' => $categories
+            'categories' => Category::where('is_active', true)->get(['id', 'name']),
+            'available_sizes' => Size::orderBy('name')->get(['id', 'name']),
+            'available_colors' => Color::orderBy('name')->get(['id', 'name', 'code']),
         ]);
     }
 
@@ -142,8 +145,10 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         return Inertia::render('Products/Edit', [
-            'product' => $product->load(['images', 'sizes', 'colors', 'details']),
+            'product' => $product->load(['images', 'sizeAttributes', 'colorAttributes', 'details']),
             'categories' => Category::where('is_active', true)->get(['id', 'name']),
+            'available_sizes' => Size::orderBy('name')->get(['id', 'name']),
+            'available_colors' => Color::orderBy('name')->get(['id', 'name', 'code']),
         ]);
     }
 
@@ -174,11 +179,10 @@ class ProductController extends Controller
             'is_active' => 'boolean',
             'images.*' => 'image|max:2048',
             'sizes' => 'nullable|array',
-            'sizes.*.size' => 'required|string',
+            'sizes.*.size_id' => 'required|exists:sizes,id',
             'sizes.*.stock' => 'required|integer|min:0',
             'colors' => 'nullable|array',
-            'colors.*.color_name' => 'required|string',
-            'colors.*.color_code' => 'nullable|string',
+            'colors.*.color_id' => 'required|exists:colors,id',
             'details' => 'nullable|array',
             'details.*.detail' => 'required|string',
         ]);
@@ -203,14 +207,19 @@ class ProductController extends Controller
         // Store sizes
         if (!empty($validated['sizes'])) {
             foreach ($validated['sizes'] as $size) {
-                $product->sizes()->create($size);
+                $product->sizeAttributes()->create([
+                    'size_id' => $size['size_id'],
+                    'stock' => $size['stock']
+                ]);
             }
         }
 
         // Store colors
         if (!empty($validated['colors'])) {
             foreach ($validated['colors'] as $color) {
-                $product->colors()->create($color);
+                $product->colorAttributes()->create([
+                    'color_id' => $color['color_id']
+                ]);
             }
         }
 
@@ -244,11 +253,10 @@ class ProductController extends Controller
             'is_active' => 'boolean',
             'images.*' => 'image|max:2048',
             'sizes' => 'nullable|array',
-            'sizes.*.size' => 'required|string',
+            'sizes.*.size_id' => 'required|exists:sizes,id',
             'sizes.*.stock' => 'required|integer|min:0',
             'colors' => 'nullable|array',
-            'colors.*.color_name' => 'required|string',
-            'colors.*.color_code' => 'nullable|string',
+            'colors.*.color_id' => 'required|exists:colors,id',
             'details' => 'nullable|array',
             'details.*.detail' => 'required|string',
         ]);
@@ -280,17 +288,22 @@ class ProductController extends Controller
 
         // Sync sizes
         if (isset($validated['sizes'])) {
-            $product->sizes()->delete();
+            $product->sizeAttributes()->delete();
             foreach ($validated['sizes'] as $size) {
-                $product->sizes()->create($size);
+                $product->sizeAttributes()->create([
+                    'size_id' => $size['size_id'],
+                    'stock' => $size['stock']
+                ]);
             }
         }
 
         // Sync colors
         if (isset($validated['colors'])) {
-            $product->colors()->delete();
+            $product->colorAttributes()->delete();
             foreach ($validated['colors'] as $color) {
-                $product->colors()->create($color);
+                $product->colorAttributes()->create([
+                    'color_id' => $color['color_id']
+                ]);
             }
         }
 

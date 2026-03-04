@@ -17,8 +17,10 @@ export default function UsersIndex() {
             )
         },
         { data: 'email', title: 'Email' },
-        { data: 'phone', title: 'Phone', render: (val) => val || '—' },
-        { data: 'orders_count', title: 'Orders', render: (val) => <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-500/10 dark:text-primary-400">{val}</span> },
+        { data: 'role', title: 'Role', render: (val) => (
+            <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide ${val === 'admin' ? 'bg-primary-100 text-primary-700 dark:bg-primary-500/10 dark:text-primary-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'}`}>{val}</span>
+        )},
+        { data: 'orders_count', title: 'Orders', render: (val) => <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">{val}</span> },
         { data: 'created_at', title: 'Joined' },
     ];
 

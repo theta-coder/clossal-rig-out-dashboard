@@ -3,10 +3,10 @@ import { useForm, Link } from '@inertiajs/react';
 import DashboardLayout from '../../Components/DashboardLayout';
 import { HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi';
 
-export default function ProductsCreate({ categories }) {
+export default function ProductsCreate({ categories, available_sizes, available_colors }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '', slug: '', description: '', price: '', original_price: '', category_id: '', badge: '', is_featured: false, is_active: true,
-        images: [], sizes: [{ size: '', stock: '' }], colors: [{ color_name: '', color_code: '#000000' }], details: [{ detail: '' }],
+        images: [], sizes: [{ size_id: '', stock: '' }], colors: [{ color_id: '' }], details: [{ detail: '' }],
     });
 
     const handleSubmit = (e) => {
@@ -14,9 +14,9 @@ export default function ProductsCreate({ categories }) {
         post('/products', { forceFormData: true });
     };
 
-    const addSize = () => setData('sizes', [...data.sizes, { size: '', stock: '' }]);
+    const addSize = () => setData('sizes', [...data.sizes, { size_id: '', stock: '' }]);
     const removeSize = (i) => setData('sizes', data.sizes.filter((_, idx) => idx !== i));
-    const addColor = () => setData('colors', [...data.colors, { color_name: '', color_code: '#000000' }]);
+    const addColor = () => setData('colors', [...data.colors, { color_id: '' }]);
     const removeColor = (i) => setData('colors', data.colors.filter((_, idx) => idx !== i));
     const addDetail = () => setData('details', [...data.details, { detail: '' }]);
     const removeDetail = (i) => setData('details', data.details.filter((_, idx) => idx !== i));
@@ -95,7 +95,10 @@ export default function ProductsCreate({ categories }) {
                         </div>
                         {data.sizes.map((s, i) => (
                             <div key={i} className="flex items-center gap-3 mb-3">
-                                <input type="text" placeholder="Size (e.g. M, L)" value={s.size} onChange={e => { const sizes = [...data.sizes]; sizes[i].size = e.target.value; setData('sizes', sizes); }} className={inputClass} />
+                                <select value={s.size_id} onChange={e => { const sizes = [...data.sizes]; sizes[i].size_id = e.target.value; setData('sizes', sizes); }} className={inputClass}>
+                                    <option value="">Select Size</option>
+                                    {available_sizes.map(size => <option key={size.id} value={size.id}>{size.name}</option>)}
+                                </select>
                                 <input type="number" placeholder="Stock" value={s.stock} onChange={e => { const sizes = [...data.sizes]; sizes[i].stock = e.target.value; setData('sizes', sizes); }} className={inputClass + ' w-28'} />
                                 {data.sizes.length > 1 && <button type="button" onClick={() => removeSize(i)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg"><HiOutlineTrash className="w-4 h-4" /></button>}
                             </div>
@@ -110,8 +113,11 @@ export default function ProductsCreate({ categories }) {
                         </div>
                         {data.colors.map((c, i) => (
                             <div key={i} className="flex items-center gap-3 mb-3">
-                                <input type="text" placeholder="Color name" value={c.color_name} onChange={e => { const colors = [...data.colors]; colors[i].color_name = e.target.value; setData('colors', colors); }} className={inputClass} />
-                                <input type="color" value={c.color_code} onChange={e => { const colors = [...data.colors]; colors[i].color_code = e.target.value; setData('colors', colors); }} className="w-12 h-10 rounded-lg cursor-pointer border border-gray-200 dark:border-gray-700" />
+                                <select value={c.color_id} onChange={e => { const colors = [...data.colors]; colors[i].color_id = e.target.value; setData('colors', colors); }} className={inputClass}>
+                                    <option value="">Select Color</option>
+                                    {available_colors.map(color => <option key={color.id} value={color.id}>{color.name}</option>)}
+                                </select>
+                                <div className="w-10 h-10 rounded-lg border border-gray-200" style={{ backgroundColor: available_colors.find(col => col.id == c.color_id)?.code || 'transparent' }}></div>
                                 {data.colors.length > 1 && <button type="button" onClick={() => removeColor(i)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg"><HiOutlineTrash className="w-4 h-4" /></button>}
                             </div>
                         ))}

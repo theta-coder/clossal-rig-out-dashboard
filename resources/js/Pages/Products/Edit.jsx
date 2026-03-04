@@ -3,13 +3,13 @@ import { useForm, Link } from '@inertiajs/react';
 import DashboardLayout from '../../Components/DashboardLayout';
 import { HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi';
 
-export default function ProductsEdit({ product, categories }) {
+export default function ProductsEdit({ product, categories, available_sizes, available_colors }) {
     const { data, setData, put, processing, errors } = useForm({
         name: product.name || '', slug: product.slug || '', description: product.description || '',
         price: product.price || '', original_price: product.original_price || '', category_id: product.category_id || '',
         badge: product.badge || '', is_featured: product.is_featured ?? false, is_active: product.is_active ?? true,
-        sizes: product.sizes?.length ? product.sizes.map(s => ({ size: s.size, stock: s.stock })) : [{ size: '', stock: '' }],
-        colors: product.colors?.length ? product.colors.map(c => ({ color_name: c.color_name, color_code: c.color_code || '#000000' })) : [{ color_name: '', color_code: '#000000' }],
+        sizes: product.size_attributes?.length ? product.size_attributes.map(s => ({ size_id: s.size_id, stock: s.stock })) : [{ size_id: '', stock: '' }],
+        colors: product.color_attributes?.length ? product.color_attributes.map(c => ({ color_id: c.color_id })) : [{ color_id: '' }],
         details: product.details?.length ? product.details.map(d => ({ detail: d.detail })) : [{ detail: '' }],
     });
 
@@ -46,13 +46,31 @@ export default function ProductsEdit({ product, categories }) {
                     )}
                     {/* Sizes */}
                     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6">
-                        <div className="flex items-center justify-between mb-4"><h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sizes</h3><button type="button" onClick={() => setData('sizes', [...data.sizes, { size: '', stock: '' }])} className="text-sm text-primary-500 flex items-center gap-1"><HiOutlinePlus className="w-4 h-4" /> Add</button></div>
-                        {data.sizes.map((s, i) => <div key={i} className="flex gap-3 mb-3"><input type="text" placeholder="Size" value={s.size} onChange={e => { const a = [...data.sizes]; a[i].size = e.target.value; setData('sizes', a); }} className={inputClass} /><input type="number" placeholder="Stock" value={s.stock} onChange={e => { const a = [...data.sizes]; a[i].stock = e.target.value; setData('sizes', a); }} className={inputClass + ' w-28'} />{data.sizes.length > 1 && <button type="button" onClick={() => setData('sizes', data.sizes.filter((_, idx) => idx !== i))} className="p-2 text-red-500"><HiOutlineTrash className="w-4 h-4" /></button>}</div>)}
+                        <div className="flex items-center justify-between mb-4"><h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sizes</h3><button type="button" onClick={() => setData('sizes', [...data.sizes, { size_id: '', stock: '' }])} className="text-sm text-primary-500 flex items-center gap-1"><HiOutlinePlus className="w-4 h-4" /> Add</button></div>
+                        {data.sizes.map((s, i) => (
+                            <div key={i} className="flex gap-3 mb-3">
+                                <select value={s.size_id} onChange={e => { const a = [...data.sizes]; a[i].size_id = e.target.value; setData('sizes', a); }} className={inputClass}>
+                                    <option value="">Select Size</option>
+                                    {available_sizes.map(size => <option key={size.id} value={size.id}>{size.name}</option>)}
+                                </select>
+                                <input type="number" placeholder="Stock" value={s.stock} onChange={e => { const a = [...data.sizes]; a[i].stock = e.target.value; setData('sizes', a); }} className={inputClass + ' w-28'} />
+                                {data.sizes.length > 1 && <button type="button" onClick={() => setData('sizes', data.sizes.filter((_, idx) => idx !== i))} className="p-2 text-red-500"><HiOutlineTrash className="w-4 h-4" /></button>}
+                            </div>
+                        ))}
                     </div>
                     {/* Colors */}
                     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6">
-                        <div className="flex items-center justify-between mb-4"><h3 className="text-lg font-semibold text-gray-900 dark:text-white">Colors</h3><button type="button" onClick={() => setData('colors', [...data.colors, { color_name: '', color_code: '#000000' }])} className="text-sm text-primary-500 flex items-center gap-1"><HiOutlinePlus className="w-4 h-4" /> Add</button></div>
-                        {data.colors.map((c, i) => <div key={i} className="flex gap-3 mb-3"><input type="text" placeholder="Color name" value={c.color_name} onChange={e => { const a = [...data.colors]; a[i].color_name = e.target.value; setData('colors', a); }} className={inputClass} /><input type="color" value={c.color_code} onChange={e => { const a = [...data.colors]; a[i].color_code = e.target.value; setData('colors', a); }} className="w-12 h-10 rounded-lg cursor-pointer" />{data.colors.length > 1 && <button type="button" onClick={() => setData('colors', data.colors.filter((_, idx) => idx !== i))} className="p-2 text-red-500"><HiOutlineTrash className="w-4 h-4" /></button>}</div>)}
+                        <div className="flex items-center justify-between mb-4"><h3 className="text-lg font-semibold text-gray-900 dark:text-white">Colors</h3><button type="button" onClick={() => setData('colors', [...data.colors, { color_id: '' }])} className="text-sm text-primary-500 flex items-center gap-1"><HiOutlinePlus className="w-4 h-4" /> Add</button></div>
+                        {data.colors.map((c, i) => (
+                            <div key={i} className="flex gap-3 mb-3">
+                                <select value={c.color_id} onChange={e => { const a = [...data.colors]; a[i].color_id = e.target.value; setData('colors', a); }} className={inputClass}>
+                                    <option value="">Select Color</option>
+                                    {available_colors.map(color => <option key={color.id} value={color.id}>{color.name}</option>)}
+                                </select>
+                                <div className="w-10 h-10 rounded-lg border border-gray-200" style={{ backgroundColor: available_colors.find(col => col.id == c.color_id)?.code || 'transparent' }}></div>
+                                {data.colors.length > 1 && <button type="button" onClick={() => setData('colors', data.colors.filter((_, idx) => idx !== i))} className="p-2 text-red-500"><HiOutlineTrash className="w-4 h-4" /></button>}
+                            </div>
+                        ))}
                     </div>
                     {/* Details */}
                     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6">

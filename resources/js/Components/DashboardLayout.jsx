@@ -4,10 +4,12 @@ import Sidebar from './Sidebar';
 import ThemeToggle from './ThemeToggle';
 import { HiOutlineBell, HiOutlineSearch } from 'react-icons/hi';
 import Swal from 'sweetalert2';
+import { router } from '@inertiajs/react';
 
 export default function DashboardLayout({ children, title }) {
     const [collapsed, setCollapsed] = useState(false);
-    const { flash, errors } = usePage().props;
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const { flash, errors, auth } = usePage().props;
 
     useEffect(() => {
         if (flash?.success) {
@@ -85,9 +87,41 @@ export default function DashboardLayout({ children, title }) {
                                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
                             </button>
 
-                            {/* User avatar */}
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center cursor-pointer hover:shadow-lg hover:shadow-primary-500/25 transition-shadow">
-                                <span className="text-white text-sm font-semibold">A</span>
+                            {/* User Menu */}
+                            <div className="relative">
+                                <div
+                                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                                    className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center cursor-pointer hover:shadow-lg hover:shadow-primary-500/25 transition-shadow select-none"
+                                >
+                                    <span className="text-white text-sm font-semibold uppercase">{auth?.user?.name ? auth.user.name.charAt(0) : 'A'}</span>
+                                </div>
+
+                                {dropdownOpen && (
+                                    <>
+                                        <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)}></div>
+                                        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 py-1 z-20 overflow-hidden transform opacity-100 scale-100 transition-all origin-top-right">
+                                            <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+                                                <div className="flex items-center gap-2 mb-0.5">
+                                                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{auth?.user?.name || 'Admin User'}</p>
+                                                    <span className="text-[9px] font-black uppercase tracking-widest bg-primary-500 text-white px-1.5 py-0.5 rounded-full flex-shrink-0">
+                                                        {auth?.user?.role || 'admin'}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{auth?.user?.email || 'admin@example.com'}</p>
+                                            </div>
+
+                                            <button
+                                                onClick={() => {
+                                                    setDropdownOpen(false);
+                                                    router.post(route('logout'));
+                                                }}
+                                                className="w-full text-left block px-4 py-2 mt-1 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors font-medium border-none outline-none"
+                                            >
+                                                Sign out
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

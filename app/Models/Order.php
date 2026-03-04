@@ -15,9 +15,11 @@ class Order extends Model
         'order_number',
         'user_id',
         'address_id',
+        'coupon_id',
         'status',
         'subtotal',
         'shipping_cost',
+        'discount_amount',
         'total',
         'payment_method',
         'notes',
@@ -28,6 +30,7 @@ class Order extends Model
         return [
             'subtotal' => 'decimal:2',
             'shipping_cost' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
             'total' => 'decimal:2',
         ];
     }
@@ -42,8 +45,18 @@ class Order extends Model
         return $this->belongsTo(Address::class);
     }
 
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(OrderStatusHistory::class)->latest();
     }
 }

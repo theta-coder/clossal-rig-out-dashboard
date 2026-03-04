@@ -5,8 +5,10 @@ import DashboardLayout from '../../Components/DashboardLayout';
 export default function OrdersShow({ order }) {
     const { data, setData, put, processing } = useForm({ status: order.status, notes: order.notes || '' });
     const statusColors = {
-        processing: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
-        shipped: 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400',
+        pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400',
+        confirmed: 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400',
+        ready_to_ship: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400',
+        shipped: 'bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400',
         delivered: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
         cancelled: 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
     };
@@ -39,6 +41,32 @@ export default function OrdersShow({ order }) {
                                 <div className="flex justify-between text-base font-bold border-t border-gray-100 dark:border-gray-800 pt-2"><span className="text-gray-900 dark:text-white">Total</span><span className="text-gray-900 dark:text-white">${Number(order.total).toFixed(2)}</span></div>
                             </div>
                         </div>
+
+                        {/* Order Timeline */}
+                        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                            <div className="p-5 border-b border-gray-100 dark:border-gray-800">
+                                <h3 className="font-semibold text-gray-900 dark:text-white">Order Timeline</h3>
+                            </div>
+                            <div className="p-6">
+                                <div className="space-y-6">
+                                    {order.status_histories?.map((history, idx) => (
+                                        <div key={history.id} className="relative flex gap-4">
+                                            {idx !== order.status_histories.length - 1 && (
+                                                <div className="absolute left-[11px] top-6 bottom-0 w-px bg-gray-100 dark:bg-gray-800"></div>
+                                            )}
+                                            <div className={`mt-1.5 w-[22px] h-[22px] rounded-full border-4 border-white dark:border-gray-900 shadow-sm z-10 ${statusColors[history.status]?.split(' ')[0] || 'bg-gray-400'}`}></div>
+                                            <div className="flex-1">
+                                                <div className="flex justify-between items-start">
+                                                    <p className="text-sm font-bold text-gray-900 dark:text-white capitalize">{history.status.replace(/_/g, ' ')}</p>
+                                                    <span className="text-[10px] text-gray-400 font-mono">{new Date(history.created_at).toLocaleString()}</span>
+                                                </div>
+                                                <p className="text-xs text-gray-500 mt-0.5">{history.notes}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     {/* Sidebar */}
                     <div className="space-y-6">
@@ -61,7 +89,7 @@ export default function OrdersShow({ order }) {
                         <form onSubmit={handleUpdate} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-4">
                             <h3 className="font-semibold text-gray-900 dark:text-white">Update Status</h3>
                             <select value={data.status} onChange={e => setData('status', e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500">
-                                {['processing', 'shipped', 'delivered', 'cancelled'].map(s => <option key={s} value={s} className="capitalize">{s}</option>)}
+                                {['pending', 'confirmed', 'ready_to_ship', 'shipped', 'delivered', 'cancelled'].map(s => <option key={s} value={s} className="capitalize">{s.replace(/_/g, ' ')}</option>)}
                             </select>
                             <textarea value={data.notes} onChange={e => setData('notes', e.target.value)} placeholder="Notes..." rows={3} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500 text-sm placeholder-gray-400"></textarea>
                             <button type="submit" disabled={processing} className="w-full px-4 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50">{processing ? 'Updating...' : 'Update Order'}</button>
