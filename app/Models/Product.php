@@ -21,6 +21,15 @@ class Product extends Model
         'badge',
         'is_featured',
         'is_active',
+        'total_sold',
+        'total_views',
+        'average_rating',
+        'review_count',
+        'published_at',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'og_image',
     ];
 
     protected function casts(): array
@@ -30,6 +39,8 @@ class Product extends Model
             'original_price' => 'decimal:2',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
+            'average_rating' => 'decimal:2',
+            'published_at' => 'datetime',
         ];
     }
 
@@ -76,5 +87,84 @@ class Product extends Model
     public function favorites(): HasMany
     {
         return $this->hasMany(Favorite::class);
+    }
+
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    public function stockLogs(): HasMany
+    {
+        return $this->hasMany(StockLog::class);
+    }
+
+    public function lowStockAlerts(): HasMany
+    {
+        return $this->hasMany(LowStockAlert::class);
+    }
+
+    public function views(): HasMany
+    {
+        return $this->hasMany(ProductView::class);
+    }
+
+    public function flashSaleProducts(): HasMany
+    {
+        return $this->hasMany(FlashSaleProduct::class);
+    }
+
+    public function flashSales(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(FlashSale::class , 'flash_sale_products')
+            ->withPivot('sale_price', 'max_quantity', 'sold_count')
+            ->withTimestamps();
+    }
+
+    public function wishlistItems(): HasMany
+    {
+        return $this->hasMany(WishlistItem::class);
+    }
+
+    public function questions(): HasMany
+    {
+        return $this->hasMany(ProductQuestion::class);
+    }
+
+    public function bundleItems(): HasMany
+    {
+        return $this->hasMany(BundleItem::class);
+    }
+
+    public function tags(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class , 'product_tags');
+    }
+
+    public function collections(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Collection::class , 'collection_product')
+            ->withPivot('sort_order')
+            ->withTimestamps();
+    }
+
+    public function variantImages(): HasMany
+    {
+        return $this->hasMany(ProductVariantImage::class);
+    }
+
+    public function comparisons(): HasMany
+    {
+        return $this->hasMany(ProductComparison::class);
+    }
+
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(StockReservation::class);
+    }
+
+    public function backInStockAlerts(): HasMany
+    {
+        return $this->hasMany(BackInStockAlert::class);
     }
 }

@@ -1,32 +1,30 @@
-import React from 'react';
 import { useTheme } from '../Contexts/ThemeContext';
 import { HiOutlineSun, HiOutlineMoon, HiOutlineDesktopComputer } from 'react-icons/hi';
 
 const modes = [
-    { value: 'light', icon: HiOutlineSun, label: 'Light' },
-    { value: 'dark', icon: HiOutlineMoon, label: 'Dark' },
-    { value: 'system', icon: HiOutlineDesktopComputer, label: 'System' },
+    { value: 'light',  icon: HiOutlineSun,             label: 'Light'  },
+    { value: 'dark',   icon: HiOutlineMoon,             label: 'Dark'   },
+    { value: 'system', icon: HiOutlineDesktopComputer,  label: 'System' },
 ];
 
 export default function ThemeToggle() {
     const { theme, setTheme } = useTheme();
 
     return (
-        <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl p-1 gap-0.5">
-            {modes.map((mode) => (
+        <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-1 gap-0.5 border border-slate-200 dark:border-slate-700">
+            {modes.map(({ value, icon: Icon, label }) => (
                 <button
-                    key={mode.value}
-                    onClick={() => setTheme(mode.value)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200
-                        ${theme === mode.value
-                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                    key={value}
+                    onClick={() => setTheme(value)}
+                    title={label}
+                    className={`flex items-center justify-center w-7 h-7 rounded-lg text-xs transition-all duration-200
+                        ${theme === value
+                            ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                            : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
                         }
                     `}
-                    title={mode.label}
                 >
-                    <mode.icon className="w-4 h-4" />
-                    <span className="hidden sm:inline">{mode.label}</span>
+                    <Icon className="w-3.5 h-3.5" />
                 </button>
             ))}
         </div>

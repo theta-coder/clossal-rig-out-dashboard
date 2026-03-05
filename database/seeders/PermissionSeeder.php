@@ -27,6 +27,8 @@ class PermissionSeeder extends Seeder
             'subscribers',
             'messages',
             'settings',
+            'announcements',
+
         ];
 
         $actions = ['show', 'create', 'edit', 'delete'];

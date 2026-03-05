@@ -32,13 +32,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/reviews/{review}', [ReviewController::class , 'destroy']);
 });
 
-Route::post('/coupons/validate', [App\Http\Controllers\Api\CouponController::class, 'validate']);
+Route::post('/coupons/validate', [App\Http\Controllers\Api\CouponController::class , 'validate']);
 Route::post('/orders', [\App\Http\Controllers\Api\OrderController::class , 'store']);
 Route::get('/orders/track', [\App\Http\Controllers\Api\OrderController::class , 'track']);
 Route::get('/categories', [CategoryController::class , 'index']);
 
 Route::get('/subcategories', [SubcategoryController::class , 'index']);
 Route::get('/subcategories/{id}', [SubcategoryController::class , 'show']);
+
+Route::get('/announcements/active', [App\Http\Controllers\Api\AnnouncementController::class , 'getActive']);
+
 
 // Products API
 Route::get('/products', [App\Http\Controllers\Api\ProductController::class , 'index']);

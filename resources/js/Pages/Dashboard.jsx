@@ -1,4 +1,3 @@
-import React from 'react';
 import DashboardLayout from '../Components/DashboardLayout';
 import {
     HiOutlineShoppingBag,
@@ -11,90 +10,137 @@ import {
     HiOutlineTag,
     HiOutlineTrendingUp,
     HiOutlineTrendingDown,
+    HiOutlineArrowRight,
 } from 'react-icons/hi';
 
-const StatCard = ({ title, value, icon: Icon, color, trend, trendValue }) => (
-    <div className="group relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 transition-all duration-300 overflow-hidden">
-        <div className={`absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl opacity-10 ${color}`}></div>
-        <div className="flex items-start justify-between relative">
-            <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{title}</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
+const StatCard = ({ title, value, icon: Icon, iconBg, trend, trendValue }) => (
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-slate-950/50 hover:-translate-y-0.5 transition-all duration-300">
+        <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">{title}</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white truncate">{value}</p>
                 {trend && (
-                    <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${trend === 'up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-                        {trend === 'up' ? <HiOutlineTrendingUp className="w-4 h-4" /> : <HiOutlineTrendingDown className="w-4 h-4" />}
-                        <span>{trendValue}</span>
+                    <div className={`flex items-center gap-1 mt-2 text-xs font-semibold ${trend === 'up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
+                        {trend === 'up'
+                            ? <HiOutlineTrendingUp className="w-3.5 h-3.5" />
+                            : <HiOutlineTrendingDown className="w-3.5 h-3.5" />
+                        }
+                        <span>{trendValue} vs last month</span>
                     </div>
                 )}
             </div>
-            <div className={`p-3 rounded-xl ${color}`}>
-                <Icon className="w-6 h-6 text-white" />
+            <div className={`p-3 rounded-xl flex-shrink-0 ml-4 ${iconBg}`}>
+                <Icon className="w-5 h-5 text-white" />
             </div>
         </div>
     </div>
 );
 
+const statusConfig = {
+    pending:       { label: 'Pending',        cls: 'bg-amber-100    text-amber-700    dark:bg-amber-500/10    dark:text-amber-400'    },
+    confirmed:     { label: 'Confirmed',      cls: 'bg-sky-100      text-sky-700      dark:bg-sky-500/10      dark:text-sky-400'      },
+    processing:    { label: 'Processing',     cls: 'bg-blue-100     text-blue-700     dark:bg-blue-500/10     dark:text-blue-400'     },
+    ready_to_ship: { label: 'Ready to Ship',  cls: 'bg-indigo-100   text-indigo-700   dark:bg-indigo-500/10   dark:text-indigo-400'   },
+    shipped:       { label: 'Shipped',        cls: 'bg-violet-100   text-violet-700   dark:bg-violet-500/10   dark:text-violet-400'   },
+    delivered:     { label: 'Delivered',      cls: 'bg-emerald-100  text-emerald-700  dark:bg-emerald-500/10  dark:text-emerald-400'  },
+    cancelled:     { label: 'Cancelled',      cls: 'bg-red-100      text-red-700      dark:bg-red-500/10      dark:text-red-400'      },
+};
+
 export default function Dashboard({ stats, recentOrders }) {
     const statCards = [
-        { title: 'Total Products', value: stats?.totalProducts || 0, icon: HiOutlineShoppingBag, color: 'bg-primary-500', trend: 'up', trendValue: '+12%' },
-        { title: 'Total Orders', value: stats?.totalOrders || 0, icon: HiOutlineClipboardList, color: 'bg-amber-500', trend: 'up', trendValue: '+8%' },
-        { title: 'Total Users', value: stats?.totalUsers || 0, icon: HiOutlineUsers, color: 'bg-emerald-500', trend: 'up', trendValue: '+5%' },
-        { title: 'Revenue', value: `$${Number(stats?.totalRevenue || 0).toLocaleString()}`, icon: HiOutlineCurrencyDollar, color: 'bg-violet-500', trend: 'up', trendValue: '+18%' },
-        { title: 'Pending Orders', value: stats?.pendingOrders || 0, icon: HiOutlineClock, color: 'bg-orange-500' },
-        { title: 'Categories', value: stats?.totalCategories || 0, icon: HiOutlineTag, color: 'bg-cyan-500' },
-        { title: 'Unread Messages', value: stats?.unreadMessages || 0, icon: HiOutlineChatAlt2, color: 'bg-rose-500' },
-        { title: 'Subscribers', value: stats?.totalSubscribers || 0, icon: HiOutlineMail, color: 'bg-indigo-500' },
+        { title: 'Total Products',   value: stats?.totalProducts   || 0,                                   icon: HiOutlineShoppingBag,     iconBg: 'bg-primary-500', trend: 'up',   trendValue: '+12%' },
+        { title: 'Total Orders',     value: stats?.totalOrders     || 0,                                   icon: HiOutlineClipboardList,   iconBg: 'bg-amber-500',   trend: 'up',   trendValue: '+8%'  },
+        { title: 'Total Users',      value: stats?.totalUsers      || 0,                                   icon: HiOutlineUsers,           iconBg: 'bg-emerald-500', trend: 'up',   trendValue: '+5%'  },
+        { title: 'Revenue',          value: `PKR ${Number(stats?.totalRevenue || 0).toLocaleString()}`,    icon: HiOutlineCurrencyDollar,  iconBg: 'bg-violet-500',  trend: 'up',   trendValue: '+18%' },
+        { title: 'Pending Orders',   value: stats?.pendingOrders   || 0,                                   icon: HiOutlineClock,           iconBg: 'bg-orange-500'  },
+        { title: 'Categories',       value: stats?.totalCategories || 0,                                   icon: HiOutlineTag,             iconBg: 'bg-cyan-500'    },
+        { title: 'Unread Messages',  value: stats?.unreadMessages  || 0,                                   icon: HiOutlineChatAlt2,        iconBg: 'bg-rose-500'    },
+        { title: 'Subscribers',      value: stats?.totalSubscribers|| 0,                                   icon: HiOutlineMail,            iconBg: 'bg-indigo-500'  },
     ];
-
-    const statusColors = {
-        processing: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
-        shipped: 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400',
-        delivered: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
-        cancelled: 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
-    };
 
     return (
         <DashboardLayout title="Dashboard">
-            {/* Stats Grid */}
+
+            {/* ── Stat cards ──────────────────────────── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                {statCards.map((stat) => (
-                    <StatCard key={stat.title} {...stat} />
-                ))}
+                {statCards.map((s) => <StatCard key={s.title} {...s} />)}
             </div>
 
-            {/* Recent Orders */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-                <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Orders</h2>
-                    <a href="/orders" className="text-sm text-primary-500 hover:text-primary-600 font-medium">View All</a>
+            {/* ── Recent Orders ───────────────────────── */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+
+                {/* Table header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+                    <div>
+                        <h2 className="text-sm font-semibold text-slate-900 dark:text-white">Recent Orders</h2>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Latest transactions across the store</p>
+                    </div>
+                    <a
+                        href="/orders"
+                        className="flex items-center gap-1 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+                    >
+                        View all <HiOutlineArrowRight className="w-3.5 h-3.5" />
+                    </a>
                 </div>
+
+                {/* Table */}
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="border-b border-gray-100 dark:border-gray-800">
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Order</th>
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Customer</th>
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Status</th>
-                                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Total</th>
+                            <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                                <th className="px-6 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Order</th>
+                                <th className="px-6 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Customer</th>
+                                <th className="px-6 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Date</th>
+                                <th className="px-6 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Status</th>
+                                <th className="px-6 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Total</th>
+                                <th className="px-6 py-3 w-10"></th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50 dark:divide-gray-800/50">
+                        <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60">
                             {recentOrders && recentOrders.length > 0 ? (
-                                recentOrders.map((order) => (
-                                    <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-5 py-3 font-medium text-gray-900 dark:text-white">#{order.order_number}</td>
-                                        <td className="px-5 py-3 text-gray-600 dark:text-gray-400">{order.user?.name || '—'}</td>
-                                        <td className="px-5 py-3">
-                                            <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[order.status] || ''}`}>
-                                                {order.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-5 py-3 text-right font-medium text-gray-900 dark:text-white">${Number(order.total).toFixed(2)}</td>
-                                    </tr>
-                                ))
+                                recentOrders.map((order) => {
+                                    const status = statusConfig[order.status] || { label: order.status, cls: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' };
+                                    return (
+                                        <tr key={order.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors group">
+                                            <td className="px-6 py-3.5">
+                                                <span className="font-semibold text-slate-900 dark:text-white">#{order.order_number}</span>
+                                            </td>
+                                            <td className="px-6 py-3.5">
+                                                <div className="flex items-center gap-2.5">
+                                                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">
+                                                        {order.user?.name ? order.user.name.charAt(0) : '?'}
+                                                    </div>
+                                                    <span className="text-slate-700 dark:text-slate-300 font-medium">{order.user?.name || '—'}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-3.5 text-slate-500 dark:text-slate-400 text-xs">
+                                                {order.created_at
+                                                    ? new Date(order.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+                                                    : '—'
+                                                }
+                                            </td>
+                                            <td className="px-6 py-3.5">
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold capitalize ${status.cls}`}>
+                                                    {status.label}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-3.5 text-right font-semibold text-slate-900 dark:text-white">
+                                                PKR {Number(order.total).toLocaleString()}
+                                            </td>
+                                            <td className="px-6 py-3.5">
+                                                <a href={`/orders/${order.id}`} className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 inline-flex">
+                                                    <HiOutlineArrowRight className="w-3.5 h-3.5" />
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             ) : (
                                 <tr>
-                                    <td colSpan={4} className="px-5 py-12 text-center text-gray-400">No recent orders</td>
+                                    <td colSpan={6} className="px-6 py-16 text-center">
+                                        <HiOutlineClipboardList className="w-10 h-10 mx-auto text-slate-200 dark:text-slate-700 mb-3" />
+                                        <p className="text-sm text-slate-400 dark:text-slate-500">No recent orders</p>
+                                    </td>
                                 </tr>
                             )}
                         </tbody>

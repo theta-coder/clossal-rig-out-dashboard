@@ -25,4 +25,14 @@ class Cart extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    public function abandonedCartReminders(): HasMany
+    {
+        return $this->hasMany(AbandonedCartReminder::class);
+    }
+
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(StockReservation::class);
+    }
 }

@@ -59,6 +59,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Roles & Permissions
     Route::resource('roles', RoleController::class)->except(['show', 'create', 'edit']);
 
+    // Announcements
+    Route::resource('announcements', \App\Http\Controllers\AnnouncementController::class)->except(['show', 'create', 'edit']);
+    Route::put('announcements/{announcement}/toggle', [\App\Http\Controllers\AnnouncementController::class , 'toggle'])->name('announcements.toggle');
+
     // Settings
     Route::get('settings', [SettingController::class , 'index'])->name('settings.index');
     Route::put('settings', [SettingController::class , 'update'])->name('settings.update');
