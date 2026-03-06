@@ -27,3 +27,5 @@ class Faq extends Model
         return $this->belongsTo(FaqCategory::class , 'faq_category_id');
     }
 }
+
+

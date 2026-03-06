@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Address; // Assuming Address model exists
+use App\Models\UserManagement\Address; // Assuming Address model exists
 
 class UserProfileController extends Controller
 {
@@ -168,3 +168,6 @@ class UserProfileController extends Controller
         ]);
     }
 }
+
+
+

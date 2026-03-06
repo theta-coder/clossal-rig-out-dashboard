@@ -23,3 +23,5 @@ class Referral extends Model
         return $this->belongsTo(Order::class);
     }
 }
+
+

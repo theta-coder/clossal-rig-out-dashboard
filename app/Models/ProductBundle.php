@@ -30,3 +30,5 @@ class ProductBundle extends Model
         return $this->hasMany(BundleItem::class , 'bundle_id');
     }
 }
+
+

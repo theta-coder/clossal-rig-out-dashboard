@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\UserManagement\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProductReturn extends Model
 {
@@ -44,4 +46,11 @@ class ProductReturn extends Model
     {
         return $this->hasMany(ReturnItem::class , 'return_id');
     }
+
+    public function refundBankDetail(): HasOne
+    {
+        return $this->hasOne(RefundBankDetail::class, 'return_id');
+    }
 }
+
+

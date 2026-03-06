@@ -17,6 +17,30 @@ import {
     HiOutlineColorSwatch,
     HiOutlineShieldCheck,
     HiOutlineSpeakerphone,
+    HiOutlineSparkles,
+    HiOutlineHashtag,
+    HiOutlineTable,
+    HiOutlineClipboardCheck,
+    HiOutlineLockClosed,
+    HiOutlineExclamation,
+    HiOutlineRefresh,
+    HiOutlineLocationMarker,
+    HiOutlineBan,
+    HiOutlineTrendingUp,
+    HiOutlineTruck,
+    HiOutlineUserGroup,
+    HiOutlineDocumentText,
+    HiOutlineQuestionMarkCircle,
+    HiOutlineCube,
+    HiOutlineReceiptTax,
+    HiOutlineCash,
+    HiOutlineChatAlt,
+    HiOutlineDocumentReport,
+    HiOutlineCreditCard,
+    HiOutlineTicket,
+    HiOutlineDatabase,
+    HiOutlineCollection,
+    HiOutlineExclamationCircle,
 } from 'react-icons/hi';
 
 const navGroups = [
@@ -24,38 +48,93 @@ const navGroups = [
         label: 'Overview',
         items: [
             { name: 'Dashboard', href: '/dashboard', icon: HiOutlineHome, permission: 'dashboard_access' },
+            { name: 'Store Analytics', href: '/dashboard/analytics', icon: HiOutlineTrendingUp, permission: 'dashboard_access' },
+            { name: 'Sales Funnel', href: '/dashboard/analytics/funnel', icon: HiOutlineTrendingUp, permission: 'dashboard_access' },
+            { name: 'Traffic Sources', href: '/dashboard/analytics/traffic', icon: HiOutlineTrendingUp, permission: 'dashboard_access' },
         ],
     },
     {
         label: 'Catalog',
         items: [
-            { name: 'Categories',  href: '/categories', icon: HiOutlineTag,          permission: 'show_categories' },
-            { name: 'Products',    href: '/products',   icon: HiOutlineShoppingBag,  permission: 'show_products'   },
-            { name: 'Sizes',       href: '/sizes',      icon: HiOutlineArrowsExpand, permission: 'show_sizes'      },
-            { name: 'Colors',      href: '/colors',     icon: HiOutlineColorSwatch,  permission: 'show_colors'     },
+            { name: 'Products', href: '/products', icon: HiOutlineShoppingBag, permission: 'show_products' },
+            { name: 'Categories', href: '/categories', icon: HiOutlineTag, permission: 'show_categories' },
+            { name: 'Collections', href: '/collections', icon: HiOutlineSparkles, permission: 'show_collections' },
+            { name: 'Tags', href: '/tags', icon: HiOutlineHashtag, permission: 'show_tags' },
+            { name: 'Size Guides', href: '/size-guides', icon: HiOutlineTable, permission: 'show_size_guides' },
+            { name: 'Sizes', href: '/sizes', icon: HiOutlineArrowsExpand, permission: 'show_sizes' },
+            { name: 'Colors', href: '/colors', icon: HiOutlineColorSwatch, permission: 'show_colors' },
+        ],
+    },
+    {
+        label: 'Inventory',
+        items: [
+            { name: 'Stock Logs', href: '/stock-logs', icon: HiOutlineClipboardCheck, permission: 'show_stock_logs' },
+            { name: 'Detailed Logs', href: '/dashboard/inventory/stock-logs', icon: HiOutlineCube, permission: 'show_stock_logs' },
+            { name: 'Reservations', href: '/stock-reservations', icon: HiOutlineLockClosed, permission: 'show_stock_reservations' },
+            { name: 'Low Stock Alerts', href: '/low-stock-alerts', icon: HiOutlineExclamation, permission: 'show_low_stock_alerts' },
         ],
     },
     {
         label: 'Commerce',
         items: [
-            { name: 'Orders',  href: '/orders',  icon: HiOutlineClipboardList, permission: 'show_orders'  },
-            { name: 'Coupons', href: '/coupons', icon: HiOutlineGift,          permission: 'show_coupons' },
+            { name: 'Orders', href: '/orders', icon: HiOutlineClipboardList, permission: 'show_orders' },
+            { name: 'Order Management', href: '/order-management/order-items', icon: HiOutlineTable, permission: 'show_orders' },
+            { name: 'Payment Failures', href: '/order-management/payment-failures', icon: HiOutlineExclamationCircle, permission: 'show_orders' },
+            { name: 'Campaigns', href: '/dashboard/campaigns', icon: HiOutlineSpeakerphone, permission: 'show_coupons' },
+            { name: 'Affiliates', href: '/dashboard/affiliates', icon: HiOutlineUserGroup, permission: 'show_coupons' },
+            { name: 'Marketing Tools', href: '/marketing-tools/coupons', icon: HiOutlineGift, permission: 'show_coupons' },
+            { name: 'Courier Companies', href: '/courier-companies', icon: HiOutlineLocationMarker, permission: 'show_orders' },
+            { name: 'Currency Rates', href: '/currency-rates', icon: HiOutlineRefresh, permission: 'dashboard_access' },
+        ],
+    },
+    {
+        label: 'Loyalty & Rewards',
+        items: [
+            { name: 'Loyalty Points', href: '/dashboard/loyalty/points', icon: HiOutlineStar, permission: 'show_coupons' },
+            { name: 'Gift Cards', href: '/dashboard/loyalty/cards', icon: HiOutlineGift, permission: 'show_coupons' },
+            { name: 'GC Transactions', href: '/dashboard/loyalty/gift-card-transactions', icon: HiOutlineCreditCard, permission: 'show_coupons' },
+            { name: 'GC Redemptions', href: '/dashboard/loyalty/gift-card-redemptions', icon: HiOutlineTicket, permission: 'show_coupons' },
+            { name: 'Wallets', href: '/dashboard/loyalty/wallets', icon: HiOutlineCash, permission: 'show_coupons' },
+        ],
+    },
+    {
+        label: 'Logistics',
+        items: [
+            { name: 'Riders', href: '/dashboard/riders', icon: HiOutlineTruck, permission: 'show_orders' },
+            { name: 'Shipping Zones', href: '/dashboard/shipping/zones', icon: HiOutlineLocationMarker, permission: 'show_orders' },
         ],
     },
     {
         label: 'Community',
         items: [
-            { name: 'Users',         href: '/users',         icon: HiOutlineUsers,        permission: 'show_users'         },
-            { name: 'Roles',         href: '/roles',         icon: HiOutlineShieldCheck,  permission: 'show_roles'         },
-            { name: 'Reviews',       href: '/reviews',       icon: HiOutlineStar,         permission: 'show_reviews'       },
-            { name: 'Subscribers',   href: '/subscribers',   icon: HiOutlineMail,         permission: 'show_subscribers'   },
-            { name: 'Messages',      href: '/messages',      icon: HiOutlineChatAlt2,     permission: 'show_messages'      },
-            { name: 'Announcements', href: '/announcements', icon: HiOutlineSpeakerphone, permission: 'show_announcements' },
+            { name: 'Users', href: '/users', icon: HiOutlineUsers, permission: 'show_users' },
+            { name: 'User Segments', href: '/dashboard/customer-segments', icon: HiOutlineUsers, permission: 'show_users' },
+            { name: 'Subscriptions', href: '/system/subscription-plans', icon: HiOutlineCollection, permission: 'show_users' },
+            { name: 'Blog Posts', href: '/dashboard/blog', icon: HiOutlineDocumentText, permission: 'show_announcements' },
+            { name: 'FAQs', href: '/dashboard/faqs', icon: HiOutlineQuestionMarkCircle, permission: 'show_announcements' },
+            { name: 'Subscribers', href: '/subscribers', icon: HiOutlineMail, permission: 'show_subscribers' },
+            { name: 'Messages', href: '/messages', icon: HiOutlineChatAlt2, permission: 'show_messages' },
+            { name: 'Complaints', href: '/complaints', icon: HiOutlineChatAlt2, permission: 'dashboard_access' },
+        ],
+    },
+    {
+        label: 'Analytics',
+        items: [
+            { name: 'Saved Reports', href: '/dashboard/analytics/saved-reports', icon: HiOutlineDocumentReport, permission: 'dashboard_access' },
         ],
     },
     {
         label: 'System',
         items: [
+            { name: 'Audit Logs', href: '/dashboard/logs/audit', icon: HiOutlineClipboardCheck, permission: 'dashboard_access' },
+            { name: 'Email Logs', href: '/dashboard/logs/emails', icon: HiOutlineMail, permission: 'dashboard_access' },
+            { name: 'Email Templates', href: '/email-templates', icon: HiOutlineMail, permission: 'dashboard_access' },
+            { name: 'SMS Templates', href: '/system/sms-templates', icon: HiOutlineChatAlt, permission: 'dashboard_access' },
+            { name: 'Tax Rates', href: '/system/tax-rates', icon: HiOutlineReceiptTax, permission: 'dashboard_access' },
+            { name: 'Bank Accounts', href: '/system/bank-accounts', icon: HiOutlineCash, permission: 'dashboard_access' },
+            { name: 'System Settings', href: '/system/system-settings', icon: HiOutlineDatabase, permission: 'dashboard_access' },
+            { name: 'Abandoned Carts', href: '/dashboard/shopping/carts', icon: HiOutlineShoppingBag, permission: 'dashboard_access' },
+            { name: 'Shopping Experience', href: '/shopping-experience', icon: HiOutlineTable, permission: 'dashboard_access' },
             { name: 'Settings', href: '/settings', icon: HiOutlineCog, permission: 'show_settings' },
         ],
     },
@@ -67,6 +146,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
 
     const isActive = (href) => {
         if (href === '/') return url === '/';
+        if (href === '/dashboard') return url === '/dashboard';
         return url.startsWith(href);
     };
 

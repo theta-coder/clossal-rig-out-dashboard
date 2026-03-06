@@ -85,3 +85,5 @@ class AuthController extends Controller
         return back()->with('status', 'We have emailed your password reset link! (Mocked implementation)');
     }
 }
+
+

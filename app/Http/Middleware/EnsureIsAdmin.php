@@ -24,3 +24,4 @@ class EnsureIsAdmin
         return $next($request);
     }
 }
+

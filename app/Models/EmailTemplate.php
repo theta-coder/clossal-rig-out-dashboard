@@ -16,3 +16,5 @@ class EmailTemplate extends Model
         'type',
     ];
 }
+
+

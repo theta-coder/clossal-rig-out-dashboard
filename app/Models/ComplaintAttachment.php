@@ -21,3 +21,5 @@ class ComplaintAttachment extends Model
         return $this->belongsTo(Complaint::class);
     }
 }
+
+

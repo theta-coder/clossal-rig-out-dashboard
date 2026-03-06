@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\ProductCatalog\Product;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,3 +46,6 @@ class StockReservation extends Model
         return $this->belongsTo(Order::class);
     }
 }
+
+
+

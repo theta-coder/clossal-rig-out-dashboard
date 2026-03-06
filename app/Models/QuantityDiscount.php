@@ -20,3 +20,5 @@ class QuantityDiscount extends Model
         'is_active' => 'boolean',
     ];
 }
+
+

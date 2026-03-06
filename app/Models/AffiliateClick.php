@@ -22,3 +22,5 @@ class AffiliateClick extends Model
         return $this->belongsTo(Affiliate::class);
     }
 }
+
+

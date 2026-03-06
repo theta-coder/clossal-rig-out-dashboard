@@ -54,3 +54,5 @@ class Complaint extends Model
         return $this->hasMany(ComplaintReply::class);
     }
 }
+
+

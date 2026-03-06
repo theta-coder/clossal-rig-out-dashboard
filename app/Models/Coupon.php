@@ -43,3 +43,5 @@ class Coupon extends Model
         return $this->hasMany(CouponUsage::class);
     }
 }
+
+

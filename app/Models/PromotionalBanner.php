@@ -36,3 +36,5 @@ class PromotionalBanner extends Model
         return true;
     }
 }
+
+

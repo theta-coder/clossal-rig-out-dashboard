@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models\ProductCatalog;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class SizeGuideRow extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'size_guide_id',
+        'size_label',
+        'measurements',
+        'sort_order',
+    ];
+
+    protected $casts = [
+        'measurements' => 'array',
+    ];
+
+    public function sizeGuide(): BelongsTo
+    {
+        return $this->belongsTo(SizeGuide::class);
+    }
+}

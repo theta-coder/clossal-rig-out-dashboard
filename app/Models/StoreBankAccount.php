@@ -24,3 +24,4 @@ class StoreBankAccount extends Model
         'is_active' => 'boolean',
     ];
 }
+

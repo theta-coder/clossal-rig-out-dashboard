@@ -30,3 +30,4 @@ class ShippingZone extends Model
         return $this->hasMany(TaxRate::class, 'zone_id');
     }
 }
+

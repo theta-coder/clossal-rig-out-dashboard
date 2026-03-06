@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\ProductCatalog\Product;
+use App\Models\ProductCatalog\ProductVariant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

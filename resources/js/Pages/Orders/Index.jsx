@@ -7,19 +7,36 @@ import { HiOutlineEye, HiOutlineTrash } from 'react-icons/hi';
 
 export default function OrdersIndex() {
     const statusColors = {
-        processing: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
+        pending: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
+        confirmed: 'bg-sky-100 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400',
+        ready_to_ship: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400',
         shipped: 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400',
         delivered: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
         cancelled: 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
+    };
+
+    const formatStatus = (value) => {
+        if (!value) return '-';
+        return value
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (c) => c.toUpperCase());
     };
 
     const columns = [
         { data: 'id', title: 'ID' },
         { data: 'order_number', title: 'Order #', render: (val) => <span className="font-medium text-gray-900 dark:text-white">#{val}</span> },
         { data: 'customer_name', title: 'Customer' },
-        { data: 'status', title: 'Status', render: (val) => <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[val] || ''}`}>{val}</span> },
-        { data: 'total', title: 'Total', render: (val) => <span className="font-mono font-medium">${val}</span> },
-        { data: 'payment_method', title: 'Payment', render: (val) => <span className="uppercase text-xs">{val}</span> },
+        {
+            data: 'status',
+            title: 'Status',
+            render: (val) => (
+                <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[val] || ''}`}>
+                    {formatStatus(val)}
+                </span>
+            )
+        },
+        { data: 'total', title: 'Total', render: (val) => <span className="font-mono font-medium">${Number(val || 0).toFixed(2)}</span> },
+        { data: 'payment_method', title: 'Payment', render: (val) => <span className="uppercase text-xs">{val || '-'}</span> },
         { data: 'created_at', title: 'Date' },
     ];
 

@@ -42,3 +42,5 @@ class Affiliate extends Model
         return $this->hasMany(AffiliateConversion::class);
     }
 }
+
+

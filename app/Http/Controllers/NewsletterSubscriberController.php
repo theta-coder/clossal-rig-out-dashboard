@@ -120,3 +120,5 @@ class NewsletterSubscriberController extends Controller
         return back()->with('success', 'Subscriber deleted successfully.');
     }
 }
+
+

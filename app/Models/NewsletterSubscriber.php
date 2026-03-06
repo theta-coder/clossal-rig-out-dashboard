@@ -21,3 +21,5 @@ class NewsletterSubscriber extends Model
         ];
     }
 }
+
+

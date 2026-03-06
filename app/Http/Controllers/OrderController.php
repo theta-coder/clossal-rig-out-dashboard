@@ -101,8 +101,9 @@ class OrderController extends Controller
             'customer_name' => $order->user ? $order->user->name : ($order->address ? $order->address->name : 'Guest'),
             'customer_email' => $order->user ? $order->user->email : ($order->address ? $order->address->email : 'N/A'),
             'items_count' => $order->items->count(),
-            'total_amount' => '$' . number_format($order->total, 2),
-            'status' => ucfirst(str_replace('_', ' ', $order->status)),
+            'total' => number_format((float) $order->total, 2, '.', ''),
+            'payment_method' => $order->payment_method,
+            'status' => $order->status,
             'created_at' => $order->created_at->format('M d, Y h:i A'),
             'action' => $order->id,
             ];
@@ -119,7 +120,20 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         return Inertia::render('Orders/Show', [
-            'order' => $order->load(['user', 'address', 'items.product', 'statusHistories']),
+            'order' => $order->load([
+                'user',
+                'address',
+                'items.product.images',
+                'statusHistories',
+                'tracking.courierCompany',
+                'invoice.user',
+                'paymentTransactions.user',
+                'returns.user',
+                'returns.items.orderItem',
+                'returns.refundBankDetail.user',
+                'codCollections.rider.user',
+                'codCollections.verifier',
+            ]),
             'statuses' => $this->orderService->getStatuses()
         ]);
     }
@@ -143,3 +157,5 @@ class OrderController extends Controller
         return back()->with('success', 'Order deleted successfully.');
     }
 }
+
+

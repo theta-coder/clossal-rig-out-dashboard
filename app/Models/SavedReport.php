@@ -35,3 +35,4 @@ class SavedReport extends Model
         return $this->belongsTo(User::class , 'admin_id');
     }
 }
+

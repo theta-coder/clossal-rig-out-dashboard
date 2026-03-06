@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\ProductCatalog\Product;
+use App\Models\UserManagement\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductView extends Model
 {
@@ -14,13 +17,17 @@ class ProductView extends Model
         'viewed_at' => 'datetime',
     ];
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 }
+
+
+
+

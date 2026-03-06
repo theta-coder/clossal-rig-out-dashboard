@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\ProductCatalog\Product;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -33,3 +35,7 @@ class LowStockAlert extends Model
         return $this->belongsTo(ProductVariant::class, 'variant_id');
     }
 }
+
+
+
+

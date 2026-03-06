@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
+use App\Models\ProductCatalog\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -13,7 +14,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'images', 'sizes', 'colors', 'details'])
+        $query = Product::with(['category', 'images', 'sizes', 'colors', 'details', 'tags'])
             ->where('is_active', true);
 
         // Filter by category name (supports comma-separated values)
@@ -34,6 +35,50 @@ class ProductController extends Controller
             $query->where('category_id', $request->category_id);
         }
 
+        // Filter by collections (supports collection/collections/collection_id/collection_slug and comma-separated values)
+        $rawCollections = $this->collectFilterValues([
+            $request->input('collection'),
+            $request->input('collections'),
+            $request->input('collection_id'),
+            $request->input('collection_slug'),
+        ]);
+
+        if (!empty($rawCollections)) {
+            $collectionIds = collect($rawCollections)
+                ->filter(fn ($value) => is_numeric($value))
+                ->map(fn ($value) => (int) $value)
+                ->unique()
+                ->values()
+                ->all();
+
+            $collectionSlugs = collect($rawCollections)
+                ->reject(fn ($value) => is_numeric($value))
+                ->map(fn ($value) => Str::slug((string) $value))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            $query->whereHas('collections', function ($q) use ($collectionIds, $collectionSlugs) {
+                $q->where(function ($collectionQuery) use ($collectionIds, $collectionSlugs) {
+                    $hasCondition = false;
+
+                    if (!empty($collectionIds)) {
+                        $collectionQuery->whereIn('collections.id', $collectionIds);
+                        $hasCondition = true;
+                    }
+
+                    if (!empty($collectionSlugs)) {
+                        if ($hasCondition) {
+                            $collectionQuery->orWhereIn('collections.slug', $collectionSlugs);
+                        } else {
+                            $collectionQuery->whereIn('collections.slug', $collectionSlugs);
+                        }
+                    }
+                });
+            });
+        }
+
         // Filter by sizes (supports comma-separated values)
         if ($request->filled('size')) {
             $sizes = collect(explode(',', (string) $request->size))
@@ -44,6 +89,49 @@ class ProductController extends Controller
 
             $query->whereHas('sizes', function ($q) use ($sizes) {
                 $q->whereIn('name', $sizes);
+            });
+        }
+
+        // Filter by tags (supports tag/tags/tag_slug/tag_id and comma-separated values)
+        $rawTags = $this->collectFilterValues([
+            $request->input('tag'),
+            $request->input('tags'),
+            $request->input('tag_slug'),
+            $request->input('tag_id'),
+        ]);
+
+        if (!empty($rawTags)) {
+            $tagIds = collect($rawTags)
+                ->filter(fn ($value) => is_numeric($value))
+                ->map(fn ($value) => (int) $value)
+                ->unique()
+                ->values()
+                ->all();
+
+            $tagSlugs = collect($rawTags)
+                ->map(fn ($value) => Str::slug((string) $value))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            $query->whereHas('tags', function ($q) use ($tagIds, $tagSlugs) {
+                $q->where(function ($tagQuery) use ($tagIds, $tagSlugs) {
+                    $hasCondition = false;
+
+                    if (!empty($tagIds)) {
+                        $tagQuery->whereIn('tags.id', $tagIds);
+                        $hasCondition = true;
+                    }
+
+                    if (!empty($tagSlugs)) {
+                        if ($hasCondition) {
+                            $tagQuery->orWhereIn('tags.slug', $tagSlugs);
+                        } else {
+                            $tagQuery->whereIn('tags.slug', $tagSlugs);
+                        }
+                    }
+                });
             });
         }
 
@@ -131,6 +219,13 @@ class ProductController extends Controller
                         'code' => $color->code,
                     ];
                 })->values(),
+                'tags' => $product->tags->map(function ($tag) {
+                    return [
+                        'id' => $tag->id,
+                        'name' => $tag->name,
+                        'slug' => $tag->slug,
+                    ];
+                })->values(),
                 'details' => $product->details->pluck('detail')->values(),
             ];
         });
@@ -158,6 +253,7 @@ class ProductController extends Controller
             'images',
             'sizes',
             'colors',
+            'tags',
             'details',
             'reviews' => function ($q) {
                 $q->where('is_verified', true)->with('user')->latest();
@@ -207,6 +303,13 @@ class ProductController extends Controller
                         'code' => $color->code,
                     ];
                 })->values(),
+                'tags' => $product->tags->map(function ($tag) {
+                    return [
+                        'id' => $tag->id,
+                        'name' => $tag->name,
+                        'slug' => $tag->slug,
+                    ];
+                })->values(),
                 'details' => $product->details->pluck('detail')->values(),
                 'reviews' => $product->reviews->map(function ($review) {
                     return [
@@ -222,4 +325,37 @@ class ProductController extends Controller
             ]
         ]);
     }
+
+    private function collectFilterValues(array $inputs): array
+    {
+        $values = [];
+
+        foreach ($inputs as $input) {
+            if (is_array($input)) {
+                foreach ($input as $item) {
+                    foreach (explode(',', (string) $item) as $part) {
+                        $part = trim($part);
+                        if ($part !== '') {
+                            $values[] = $part;
+                        }
+                    }
+                }
+                continue;
+            }
+
+            if ($input !== null && $input !== '') {
+                foreach (explode(',', (string) $input) as $part) {
+                    $part = trim($part);
+                    if ($part !== '') {
+                        $values[] = $part;
+                    }
+                }
+            }
+        }
+
+        return array_values(array_unique($values));
+    }
 }
+
+
+

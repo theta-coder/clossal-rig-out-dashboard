@@ -35,3 +35,5 @@ class SettingController extends Controller
         return redirect()->route('settings.index')->with('success', 'Settings updated successfully.');
     }
 }
+
+

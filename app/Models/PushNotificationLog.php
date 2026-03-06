@@ -19,3 +19,5 @@ class PushNotificationLog extends Model
         'status',
     ];
 }
+
+

@@ -31,3 +31,4 @@ class ShippingRate extends Model
         return $this->belongsTo(ShippingZone::class, 'zone_id');
     }
 }
+

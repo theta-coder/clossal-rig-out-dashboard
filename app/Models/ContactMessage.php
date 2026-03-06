@@ -23,3 +23,5 @@ class ContactMessage extends Model
         ];
     }
 }
+
+

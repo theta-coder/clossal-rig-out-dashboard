@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\ProductCatalog\Category;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -36,3 +38,6 @@ class TaxRate extends Model
         return $this->belongsTo(ShippingZone::class, 'zone_id');
     }
 }
+
+
+

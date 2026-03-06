@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\ProductCatalog\Product;
+use App\Models\ProductCatalog\ProductVariant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +15,7 @@ class CartItem extends Model
     protected $fillable = [
         'cart_id',
         'product_id',
+        'variant_id',
         'size',
         'color',
         'quantity',
@@ -33,5 +36,10 @@ class CartItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(ProductVariant::class , 'variant_id');
     }
 }

@@ -32,3 +32,4 @@ class Wishlist extends Model
         return $this->hasMany(WishlistItem::class);
     }
 }
+

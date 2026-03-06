@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\UserManagement\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,3 +24,4 @@ class AdminSeeder extends Seeder
         $this->command->info('Admin account created: admin@urbanthread.com / admin123');
     }
 }
+

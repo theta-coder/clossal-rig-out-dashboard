@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\UserManagement\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -38,3 +39,5 @@ class PaymentTransaction extends Model
         return $this->belongsTo(User::class);
     }
 }
+
+

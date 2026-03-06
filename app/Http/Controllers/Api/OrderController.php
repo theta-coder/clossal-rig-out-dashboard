@@ -53,6 +53,7 @@ class OrderController extends Controller
             'items.*.price' => 'required|numeric',
             'items.*.size' => 'nullable|string',
             'items.*.color' => 'nullable|string',
+            'items.*.variant_id' => 'nullable|exists:product_variants,id',
         ];
 
         if ($request->has('address_id') && !empty($request->address_id)) {
@@ -76,7 +77,7 @@ class OrderController extends Controller
 
         // Create address if not provided
         if (!$request->has('address_id') || empty($request->address_id)) {
-            $address = \App\Models\Address::create([
+            $address = \App\Models\UserManagement\Address::create([
                 'user_id' => $validated['user_id'],
                 'email' => $validated['address']['email'] ?? ($user ? $user->email : null),
                 'type' => $validated['address']['type'] ?? 'shipping',

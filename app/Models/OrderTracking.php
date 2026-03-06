@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderTracking extends Model
 {
+    protected $table = 'order_tracking';
+
     protected $fillable = [
         'order_id',
         'courier_name',
@@ -36,3 +38,5 @@ class OrderTracking extends Model
         return $this->belongsTo(CourierCompany::class , 'courier_id');
     }
 }
+
+

@@ -36,3 +36,4 @@ class Wallet extends Model
         return $this->hasMany(WalletTransaction::class);
     }
 }
+

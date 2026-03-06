@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use App\Models\Order;
-use App\Models\Product;
+use App\Models\ProductCatalog\Product;
+use App\Models\ProductCatalog\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -37,17 +38,40 @@ class OrderService
             foreach ($data['items'] as $item) {
                 $product = Product::with('images')->find($item['product_id']);
 
-                $order->items()->create([
+                $orderItem = [
                     'product_id' => $item['product_id'],
+                    'variant_id' => $item['variant_id'] ?? null,
                     'product_name' => $product->name,
                     'product_image' => $product->images->first()->image_path ?? '',
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                     'size' => $item['size'] ?? null,
                     'color' => $item['color'] ?? null,
-                ]);
+                ];
 
-            // Optional: Update product stock
+                // If variant_id is provided, use variant specific info
+                if (!empty($item['variant_id'])) {
+                    $variant = ProductVariant::with(['variantImages', 'size', 'color'])->find($item['variant_id']);
+                    if ($variant) {
+                        $orderItem['size'] = $variant->size->name ?? $orderItem['size'];
+                        $orderItem['color'] = $variant->color->name ?? $orderItem['color'];
+                        $primaryVariantImage = $variant->variantImages->firstWhere('is_primary', true) ?? $variant->variantImages->first();
+                        if ($primaryVariantImage) {
+                            $orderItem['product_image'] = $primaryVariantImage->image_path;
+                        }
+
+                        // Deduct variant stock
+                        if ($variant->stock >= $item['quantity']) {
+                            $variant->decrement('stock', $item['quantity']);
+                        }
+                    }
+                }
+                else {
+                // Falls back to simple product stock if no variant used
+                // Note: This matches the old behavior where stock might be on product_sizes pivot
+                }
+
+                $order->items()->create($orderItem);
             }
 
             return $order;

@@ -34,3 +34,5 @@ class CourierCompany extends Model
         return $this->hasMany(OrderTracking::class , 'courier_id');
     }
 }
+
+

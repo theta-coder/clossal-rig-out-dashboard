@@ -27,3 +27,5 @@ class Page extends Model
         'show_in_header' => 'boolean',
     ];
 }
+
+

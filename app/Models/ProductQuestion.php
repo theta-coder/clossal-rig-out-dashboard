@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\ProductCatalog\Product;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,3 +42,7 @@ class ProductQuestion extends Model
         return $this->hasMany(ProductAnswer::class , 'question_id');
     }
 }
+
+
+
+

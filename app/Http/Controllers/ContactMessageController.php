@@ -128,3 +128,5 @@ class ContactMessageController extends Controller
         return back()->with('success', 'Message deleted successfully.');
     }
 }
+
+

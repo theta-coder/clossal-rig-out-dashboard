@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\CartItem;
-use App\Models\Product;
+use App\Models\ProductCatalog\Product;
+use App\Models\ProductCatalog\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -61,6 +62,7 @@ class CartController extends Controller
             'price' => $item->product->price ?? 0,
             'size' => $item->size,
             'color' => $item->color,
+            'variant_id' => $item->variant_id,
             'quantity' => $item->quantity,
             'image' => $image ? url($image->image_path) : null,
             ];
@@ -86,6 +88,7 @@ class CartController extends Controller
         $validator = Validator::make($request->all(), [
             'session_id' => 'required|string',
             'product_id' => 'required|exists:products,id',
+            'variant_id' => 'nullable|exists:product_variants,id',
             'size' => 'required|string',
             'color' => 'nullable|string',
             'quantity' => 'nullable|integer|min:1'
@@ -114,12 +117,19 @@ class CartController extends Controller
             $cart->save();
         }
 
-        // Check if item already exists in cart with same size and color
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $request->product_id)
-            ->where('size', $request->size)
-            ->where('color', $request->color)
-            ->first();
+        // Check if item already exists in cart with same variant or (size and color)
+        $query = CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $request->product_id);
+
+        if ($request->filled('variant_id')) {
+            $query->where('variant_id', $request->variant_id);
+        }
+        else {
+            $query->where('size', $request->size)
+                ->where('color', $request->color);
+        }
+
+        $cartItem = $query->first();
 
         $quantity = $request->quantity ?? 1;
 
@@ -131,6 +141,7 @@ class CartController extends Controller
             $cartItem = CartItem::create([
                 'cart_id' => $cart->id,
                 'product_id' => $request->product_id,
+                'variant_id' => $request->variant_id,
                 'size' => $request->size,
                 'color' => $request->color,
                 'quantity' => $quantity

@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\UserManagement\User;
+use App\Models\ProductCatalog\Product;
 
 class ProductComparison extends Model
 {
-    use HasFactory;
-
     public $timestamps = false;
 
     protected $fillable = [
-        'user_id',
-        'session_id',
-        'product_id',
-        'created_at',
+        'user_id', 'session_id', 'product_id',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

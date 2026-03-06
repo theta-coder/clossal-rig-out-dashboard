@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\UserManagement\Address;
+use App\Models\UserManagement\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -111,9 +113,28 @@ class Order extends Model
         return $this->hasMany(GiftCardTransaction::class);
     }
 
-    public function refundBankDetail(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function refundBankDetail(): \Illuminate\Database\Eloquent\Relations\HasOneThrough
     {
-        return $this->hasOne(RefundBankDetail::class);
+        return $this->hasOneThrough(
+            RefundBankDetail::class,
+            ProductReturn::class,
+            'order_id',
+            'return_id',
+            'id',
+            'id'
+        );
+    }
+
+    public function refundBankDetails(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            RefundBankDetail::class,
+            ProductReturn::class,
+            'order_id',
+            'return_id',
+            'id',
+            'id'
+        );
     }
 
     public function giftCard(): BelongsTo
@@ -156,3 +177,5 @@ class Order extends Model
         return $this->hasMany(CodCollection::class);
     }
 }
+
+

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Size;
-use App\Models\Color;
+use App\Models\ProductCatalog\Size;
+use App\Models\ProductCatalog\Color;
 
 class SizeColorController extends Controller
 {
@@ -34,3 +34,6 @@ class SizeColorController extends Controller
         ]);
     }
 }
+
+
+
